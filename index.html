@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduMaktab — Zamonaviy O'quv Markazi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --surface: #1e1e2e;
+    --surface2: #252535;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --text: #f0f0f5;
+    --text2: #9999bb;
+    --text3: #5555778;
+    --border: rgba(255,255,255,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
+
+  /* ───── NAV ───── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    padding: 0 5%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  nav.scrolled {
+    height: 60px;
+    background: rgba(10,10,15,0.97);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-logo .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(0,212,255,0); }
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white !important;
+    padding: 9px 22px;
+    border-radius: 50px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { opacity: 0.9; transform: translateY(-1px) !important; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 901;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 70px; left: 0; right: 0;
+    background: rgba(10,10,15,0.98);
+    backdrop-filter: blur(20px);
+    padding: 24px 5% 32px;
+    border-bottom: 1px solid var(--border);
+    z-index: 899;
+    transform: translateY(-110%);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .mobile-menu.open {
+    transform: translateY(0);
+    display: block;
+  }
+  .mobile-menu a {
+    display: block;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 14px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu .mob-cta {
+    margin-top: 20px;
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white !important;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+  }
+
+  /* ───── HERO ───── */
+  #hero {
+    min-height: 100vh;
+    padding: 70px 5% 60px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(124,58,237,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 20% 30%, rgba(0,212,255,0.1) 0%, transparent 50%),
+      linear-gradient(180deg, #0a0a0f 0%, #0d0d18 100%);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.25);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '●';
+    font-size: 0.5rem;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero-title .line1 { display: block; color: var(--text); }
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-desc {
+    color: var(--text2);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s 0.2s ease both;
+    line-height: 1.7;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 30px rgba(0,212,255,0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(0,212,255,0.4);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .hero-visual {
+    position: relative;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-img-placeholder {
+    width: 100%;
+    height: 320px;
+    background:
+    linear-gradient(to right, rgba(0,0,0,0.8), transparent),
+    url("./background\ 1.png");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-img-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(0,212,255,0.05) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .hero-person-icon {
+    font-size: 5rem;
+    opacity: 0.6;
+  }
+  .hero-card-info {
+    padding: 20px;
+  }
+  .rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: var(--accent3);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .rating-badge span { font-size: 0.8rem; font-weight: 400; color: var(--text2); }
+  .floating-card {
+    position: absolute;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    backdrop-filter: blur(10px);
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .float-1 { bottom: -20px; left: -30px; animation-delay: 0s; }
+  .float-2 { top: 30px; right: -30px; animation-delay: 2s; }
+  .float-card-label { font-size: 0.7rem; color: var(--text2); margin-bottom: 2px; }
+  .float-card-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+
+  /* ───── STATS ───── */
+  .stats-section {
+    padding: 60px 5%;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    text-align: center;
+  }
+  .stat-item { position: relative; }
+  .stat-item::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    height: 40px; width: 1px;
+    background: var(--border);
+  }
+  .stat-item:last-child::after { display: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { color: var(--text2); font-size: 0.9rem; }
+
+  /* ───── SECTIONS ───── */
+  .section {
+    padding: 80px 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-full {
+    padding: 80px 5%;
+    background: var(--bg2);
+  }
+  .section-full-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-tag {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    position: relative;
+    padding-left: 20px;
+  }
+  .section-tag::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 12px; height: 2px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .section-desc {
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* ───── RAQAMLAR ───── */
+  .ragamlar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .ragam-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .ragam-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .ragam-card:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.2); }
+  .ragam-card:hover::before { transform: scaleX(1); }
+  .ragam-icon { font-size: 2rem; margin-bottom: 12px; }
+  .ragam-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+  .ragam-text { color: var(--text2); font-size: 0.9rem; line-height: 1.6; }
+  .ragam-highlight {
+    background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(124,58,237,0.1));
+    border-color: rgba(0,212,255,0.2);
+  }
+
+  /* ───── COURSES ───── */
+  .courses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .course-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .course-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .course-card:hover { transform: translateY(-6px); border-color: rgba(0,212,255,0.25); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+  .course-thumb {
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+  }
+  .course-thumb-bg {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+  }
+  .course-thumb-bg.py { background: linear-gradient(135deg, #1e3a5f, #0d2137); }
+  .course-thumb-bg.js { background: linear-gradient(135deg, #3a2800, #1a1200); }
+  .course-thumb-bg.ds { background: linear-gradient(135deg, #1a0a2e, #0d0520); }
+  .course-thumb-bg.web { background: linear-gradient(135deg, #002a1e, #001510); }
+  .course-thumb-bg.ai { background: linear-gradient(135deg, #2a0a0a, #150505); }
+  .course-thumb-bg.mob { background: linear-gradient(135deg, #0a2a1a, #051510); }
+  .course-level {
+    position: absolute;
+    top: 12px; right: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .level-boshlangich { background: rgba(0,212,255,0.2); color: var(--accent); }
+  .level-orta { background: rgba(245,158,11,0.2); color: var(--accent3); }
+  .level-yuqori { background: rgba(124,58,237,0.2); color: #a78bfa; }
+  .course-body { padding: 20px; }
+  .course-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+  .course-info {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .course-info span { color: var(--text2); font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+  .course-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .course-price { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); font-size: 1.1rem; }
+  .course-btn {
+    padding: 8px 18px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .course-btn:hover { background: var(--accent); color: var(--bg); }
+
+  /* ───── ABOUT ───── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .about-video {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .about-video-bg {
+    width: 100%;
+    height: 340px;
+    background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .play-btn {
+    width: 70px; height: 70px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 2;
+  }
+  .play-btn:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
+  .play-btn svg { width: 28px; height: 28px; fill: white; margin-left: 4px; }
+  .about-video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    pointer-events: none;
+  }
+  .about-text .section-title { margin-top: 0; }
+  .about-features { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .about-feature {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s;
+  }
+  .about-feature:hover { border-color: rgba(0,212,255,0.2); }
+  .about-feature-icon {
+    width: 40px; height: 40px;
+    background: rgba(0,212,255,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .about-feature-text { font-size: 0.9rem; color: var(--text2); }
+  .about-feature-title { font-weight: 600; color: var(--text); font-size: 0.95rem; margin-bottom: 2px; }
+
+  /* ───── TEACHERS ───── */
+  .teachers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .teacher-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .teacher-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 80px;
+    opacity: 0.5;
+  }
+.teacher-avatar{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 3px solid white;
+}
+.teacher-card:nth-child(1) .teacher-avatar{
+   background-image: url("./image\ 7.png");
+}
+.teacher-card:nth-child(2) .teacher-avatar{
+   background-image: url("./image\ 8.png");
+}
+.teacher-card:nth-child(3) .teacher-avatar{
+   background-image: url("./image\ 9.png");
+}
+  .teacher-card:hover { transform: translateY(-6px); border-color: rgba(0,212,255,0.2); }
+
+  .teacher-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .teacher-role { color: var(--accent); font-size: 0.8rem; font-weight: 600; margin-bottom: 10px; }
+  .teacher-bio { color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px; }
+  .teacher-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .teacher-stat { text-align: center; }
+  .teacher-stat-num { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--accent); }
+  .teacher-stat-label { font-size: 0.7rem; color: var(--text2); }
+
+  /* ───── NEWS ───── */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .news-main {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .news-main:hover { transform: translateY(-4px); border-color: rgba(0,212,255,0.2); }
+  .news-img {
+    height: 480px;
+    background-image: url(./Union.png);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .news-img-small {
+    height: 120px;
+  }
+  .news-body { padding: 20px; }
+  .news-cat {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .news-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 8px; line-height: 1.4; }
+  .news-date { color: var(--text2); font-size: 0.8rem; }
+  .news-side { display: flex; flex-direction: column; gap: 16px; }
+  .news-small {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+  }
+  .news-small:hover { border-color: rgba(0,212,255,0.2); }
+  .news-small .news-body { padding: 14px; }
+  .news-small .news-title { font-size: 0.88rem; }
+
+  /* ───── TARIFFS ───── */
+  .tariffs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .tariff-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    position: relative;
+    transition: all 0.3s;
+    overflow: hidden;
+  }
+  .tariff-card.featured {
+    background: linear-gradient(135deg, #1a0a2e, #0d0520);
+    border-color: rgba(124,58,237,0.4);
+    transform: scale(1.02);
+  }
+  .tariff-card.featured::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(124,58,237,0.1) 0%, transparent 60%);
+  }
+  .tariff-card:hover { transform: translateY(-4px); }
+  .tariff-card.featured:hover { transform: scale(1.02) translateY(-4px); }
+  .tariff-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+  .tariff-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; margin-bottom: 6px; }
+  .tariff-price {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    margin: 16px 0 8px;
+    color: var(--text);
+  }
+  .tariff-price span { font-size: 1rem; font-weight: 400; color: var(--text2); }
+  .tariff-desc { color: var(--text2); font-size: 0.85rem; margin-bottom: 24px; }
+  .tariff-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px; }
+  .tariff-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: var(--text2);
+  }
+  .tariff-features li::before {
+    content: '✓';
+    width: 20px; height: 20px;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tariff-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+  }
+  .tariff-btn-outline {
+    background: transparent;
+    border: 1px solid var(--border) !important;
+    color: var(--text);
+    border: none;
+  }
+  .tariff-btn-outline:hover { border-color: var(--accent) !important; color: var(--accent); }
+  .tariff-btn-filled {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+  .tariff-btn-filled:hover { opacity: 0.9; transform: translateY(-1px); }
+  .tariff-btn-gold {
+    background: linear-gradient(135deg, var(--accent3), #d97706);
+    color: white;
+  }
+  .tariff-btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* ───── REGISTRATION FORM ───── */
+  .reg-section {
+    padding: 80px 5%;
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+  .reg-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(124,58,237,0.06) 0%, transparent 70%);
+  }
+  .reg-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .reg-left {}
+  .reg-perks { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+  .reg-perk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+    color: var(--text2);
+  }
+  .perk-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .reg-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+  }
+  .form-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; margin-bottom: 24px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 8px; font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text2); }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+  .form-group select { cursor: pointer; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 6px;
+  }
+  .form-submit:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,212,255,0.2); }
+  .form-note { text-align: center; font-size: 0.8rem; color: var(--text2); margin-top: 14px; }
+
+  /* BUBBLES */
+  .bubbles-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 30px;
+    justify-content: center;
+  }
+  .bubble {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    animation: float2 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .bubble:hover { transform: scale(1.3) !important; }
+  @keyframes float2 {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ───── FOOTER ───── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 60px 5% 30px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+  .footer-brand .nav-logo { font-size: 1.2rem; margin-bottom: 14px; display: inline-flex; }
+  .footer-brand p { color: var(--text2); font-size: 0.875rem; line-height: 1.7; max-width: 280px; }
+  .footer-socials { display: flex; gap: 10px; margin-top: 20px; }
+  .social-btn {
+    width: 38px; height: 38px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text2);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .social-btn:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .footer-col h4 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 16px; font-size: 0.9rem; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a { color: var(--text2); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+  .footer-col ul a:hover { color: var(--accent); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text2);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer-bottom a { color: var(--text2); text-decoration: none; }
+  .footer-bottom a:hover { color: var(--accent); }
+
+  /* ───── MODAL ───── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s;
+  }
+  .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .modal { position: relative; }
+
+  /* ───── SUCCESS TOAST ───── */
+  .toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--surface);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 14px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9998;
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-icon { font-size: 1.4rem; }
+  .toast-text { font-weight: 500; font-size: 0.9rem; }
+
+  /* ───── SCROLL TO TOP ───── */
+  .scroll-top {
+    position: fixed;
+    bottom: 30px; left: 30px;
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 800;
+    transform: scale(0);
+    transition: transform 0.3s;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0,212,255,0.3);
+  }
+  .scroll-top.visible { transform: scale(1); }
+  .scroll-top:hover { transform: scale(1.1); }
+
+  /* ───── SKILL CARDS ───── */
+  .skills-section {
+    padding: 60px 5%;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+  }
+  .skills-inner { max-width: 1200px; margin: 0 auto; }
+  .skills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .skills-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .skill-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .skill-item:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-3px); }
+  .skill-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+  .skill-name { font-size: 0.82rem; color: var(--text2); }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 1024px) {
+    .courses-grid { grid-template-columns: repeat(2, 1fr); }
+    .teachers-grid { grid-template-columns: repeat(2, 1fr); }
+    .skills-grid { grid-template-columns: repeat(4, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .tariffs-grid { grid-template-columns: 1fr 1fr; }
+    .tariff-card.featured { transform: none; }
+    .tariff-card.featured:hover { transform: translateY(-4px); }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-video-bg { height: 260px; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: block; }
+    
+    .hero-content { grid-template-columns: 1fr; gap: 40px; }
+    .hero-visual { order: -1; }
+    .hero-img-placeholder { height: 220px; }
+    .float-1 { display: none; }
+    .float-2 { display: none; }
+
+    .stats-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+    .stat-item::after { display: none; }
+
+    .ragamlar-grid { grid-template-columns: 1fr; }
+    .courses-grid { grid-template-columns: 1fr; }
+    .teachers-grid { grid-template-columns: 1fr; }
+    .news-grid { grid-template-columns: 1fr; }
+    .news-small { grid-template-columns: 100px 1fr; }
+    .tariffs-grid { grid-template-columns: 1fr; }
+    .reg-inner { grid-template-columns: 1fr; gap: 40px; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .skills-grid { grid-template-columns: repeat(3, 1fr); }
+    .courses-header { flex-direction: column; align-items: flex-start; }
+    .hero-actions { flex-direction: column; }
+    .btn-primary, .btn-secondary { text-align: center; justify-content: center; }
+    .skills-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 480px) {
+    .section { padding: 60px 4%; }
+    .section-full { padding: 60px 4%; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+    .reg-form { padding: 24px 20px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .hero-title { font-size: 2rem; }
+    .toast { left: 16px; right: 16px; bottom: 16px; }
+    .scroll-top { bottom: 16px; left: 16px; }
+  }
+
+  /* ───── ANIMATIONS ───── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="dot"></div>
+    Edu<span>Maktab</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#courses">Kurslar</a></li>
+    <li><a href="#about">Maktab haqida</a></li>
+    <li><a href="#teachers">O'qituvchilar</a></li>
+    <li><a href="#news">Yangiliklar</a></li>
+    <li><a href="#tariffs">Tariflar</a></li>
+    <li><a href="#register" class="nav-cta">Ro'yxatdan o'tish</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#courses" class="mob-link">🎓 Kurslar</a>
+  <a href="#about" class="mob-link">🏫 Maktab haqida</a>
+  <a href="#teachers" class="mob-link">👨‍🏫 O'qituvchilar</a>
+  <a href="#news" class="mob-link">📰 Yangiliklar</a>
+  <a href="#tariffs" class="mob-link">💎 Tariflar</a>
+  <a href="#register" class="mob-cta">Ro'yxatdan o'tish →</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">🚀 O'zbekistonning #1 IT maktabi</div>
+      <h1 class="hero-title">
+        <span class="line1">Kelajakni bugun</span>
+        <span class="line2">qurishni boshlang</span>
+      </h1>
+      <p class="hero-desc">
+        Zamonaviy IT bilimlar, professional o'qituvchilar va amaliy loyihalar orqali 
+        karyerangizni yangi bosqichga olib chiqing.
+      </p>
+      <div class="hero-actions">
+        <a href="#courses" class="btn-primary">
+          Kurslarni ko'rish
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#about" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4V8z"/></svg>
+          Video ko'rish
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-img-placeholder">
+          <span class="hero-person-icon">👩‍💻</span>
+        </div>
+        <div class="hero-card-info">
+          <div class="rating-badge">⭐ 4.7 <span>Reyting ko'rsatkichi</span></div>
+          <p style="color:var(--text2);font-size:0.85rem">1000+ talabalar allaqachon o'qishmoqda</p>
+        </div>
+      </div>
+      <div class="floating-card float-1">
+        <div class="float-card-label">Bitiruvchilar</div>
+        <div class="float-card-value">+300</div>
+      </div>
+      <div class="floating-card float-2">
+        <div class="float-card-label">Kurslar</div>
+        <div class="float-card-value">22+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-num" data-target="300">0</div>
+      <div class="stat-label">Muvaffaqiyatli bitiruvchilar</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num" data-target="40">0</div>
+      <div class="stat-label">Davomiy kurslar</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num" data-target="22">0</div>
+      <div class="stat-label">Aktiv o'qituvchilar</div>
+    </div>
+  </div>
+</section>
+
+<!-- RAGAMLAR -->
+<section class="section" id="about-stats">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:50px;" class="reveal">
+      <div class="section-tag">Raqamlar so'zlaydi</div>
+      <h2 class="section-title">Nima uchun aynan biz?</h2>
+      <p class="section-desc" style="margin:0 auto;">Bizning maktab talabalar uchun eng qulay va samarali ta'lim muhitini yaratadi.</p>
+    </div>
+    <div class="ragamlar-grid">
+      <div class="ragam-card ragam-highlight reveal">
+        <div class="ragam-icon">🎯</div>
+        <div class="ragam-title">Amaliy loyihalar</div>
+        <div class="ragam-text">Har bir kurs so'ngida real dunyo loyihasi yaratib, portfelingizni boyitasiz va ish beruvchilar e'tiborini jalb qilasiz.</div>
+      </div>
+      <div class="ragam-card reveal reveal-delay-1">
+        <div class="ragam-icon">👨‍🏫</div>
+        <div class="ragam-title">Mutaxassis o'qituvchilar</div>
+        <div class="ragam-text">Barcha o'qituvchilarimiz sanoatda kamida 5 yillik tajribaga ega bo'lgan IT mutaxassislar.</div>
+      </div>
+      <div class="ragam-card reveal reveal-delay-2">
+        <div class="ragam-icon">🌐</div>
+        <div class="ragam-title">Onlayn & Oflayn</div>
+        <div class="ragam-text">Qulay formatda o'qing. Onlayn platformamiz yoki bizning zamonaviy o'quv markazimizda.</div>
+      </div>
+      <div class="ragam-card reveal reveal-delay-3">
+        <div class="ragam-icon">💼</div>
+        <div class="ragam-title">Ish ta'minlash</div>
+        <div class="ragam-text">Bitiruvchilarimizning 85% kurs tugaganidan keyin 3 oy ichida IT sohasida ish topishadi.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<div class="section-full" id="courses">
+  <div class="section-full-inner">
+    <div class="courses-header reveal">
+      <div>
+        <div class="section-tag">O'quv dasturi</div>
+        <h2 class="section-title">Mashhur kurslarimiz</h2>
+      </div>
+      <div class="course-tabs">
+        <button class="tab-btn active" data-filter="all">Barchasi</button>
+        <button class="tab-btn" data-filter="frontend">Frontend</button>
+        <button class="tab-btn" data-filter="backend">Backend</button>
+        <button class="tab-btn" data-filter="data">Data</button>
+        <button class="tab-btn" data-filter="mobile">Mobile</button>
+      </div>
+    </div>
+    <div class="courses-grid" id="coursesGrid">
+      <div class="course-card reveal" data-category="backend">
+        <div class="course-thumb">
+          <div class="course-thumb-bg py">🐍</div>
+          <span class="course-level level-boshlangich">Boshlang'ich</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Python dasturlash</div>
+          <div class="course-info">
+            <span>📚 48 dars</span>
+            <span>⏱ 6 oy</span>
+            <span>👥 124</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">850,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+      <div class="course-card reveal reveal-delay-1" data-category="frontend">
+        <div class="course-thumb">
+          <div class="course-thumb-bg js">⚡</div>
+          <span class="course-level level-orta">O'rta</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">JavaScript & React</div>
+          <div class="course-info">
+            <span>📚 60 dars</span>
+            <span>⏱ 8 oy</span>
+            <span>👥 98</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">1,100,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+      <div class="course-card reveal reveal-delay-2" data-category="data">
+        <div class="course-thumb">
+          <div class="course-thumb-bg ds">📊</div>
+          <span class="course-level level-yuqori">Yuqori</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Data Science & ML</div>
+          <div class="course-info">
+            <span>📚 72 dars</span>
+            <span>⏱ 9 oy</span>
+            <span>👥 67</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">1,400,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+      <div class="course-card reveal" data-category="frontend">
+        <div class="course-thumb">
+          <div class="course-thumb-bg web">🌐</div>
+          <span class="course-level level-boshlangich">Boshlang'ich</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Web Development</div>
+          <div class="course-info">
+            <span>📚 40 dars</span>
+            <span>⏱ 5 oy</span>
+            <span>👥 156</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">700,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+      <div class="course-card reveal reveal-delay-1" data-category="data">
+        <div class="course-thumb">
+          <div class="course-thumb-bg ai">🤖</div>
+          <span class="course-level level-yuqori">Yuqori</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">AI & Deep Learning</div>
+          <div class="course-info">
+            <span>📚 80 dars</span>
+            <span>⏱ 10 oy</span>
+            <span>👥 45</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">1,800,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+      <div class="course-card reveal reveal-delay-2" data-category="mobile">
+        <div class="course-thumb">
+          <div class="course-thumb-bg mob">📱</div>
+          <span class="course-level level-orta">O'rta</span>
+        </div>
+        <div class="course-body">
+          <div class="course-name">Flutter Mobile Dev</div>
+          <div class="course-info">
+            <span>📚 55 dars</span>
+            <span>⏱ 7 oy</span>
+            <span>👥 82</span>
+          </div>
+          <div class="course-footer">
+            <div class="course-price">1,000,000 so'm</div>
+            <a href="#register" class="course-btn">Ro'yxat</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="about-grid">
+    <div class="about-video reveal" onclick="openModal('video')">
+      <div class="about-video-bg">
+        <div class="play-btn">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="about-text reveal reveal-delay-1">
+      <div class="section-tag">Maktab haqida</div>
+      <h2 class="section-title">Bizning maqsad — sifatli ta'lim</h2>
+      <p class="section-desc">
+        2018-yildan beri faoliyat yuritayotgan EduMaktab O'zbekistonning yetakchi IT ta'lim markazlaridan biri sifatida 
+        3000+ o'quvchiga sifatli bilim berdi.
+      </p>
+      <div class="about-features">
+        <div class="about-feature">
+          <div class="about-feature-icon">🏆</div>
+          <div>
+            <div class="about-feature-title">Sertifikatlar</div>
+            <div class="about-feature-text">Xalqaro tan olingan sertifikatlar bilan ta'minlaymiz</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="about-feature-icon">🔄</div>
+          <div>
+            <div class="about-feature-title">Mentorlik dasturi</div>
+            <div class="about-feature-text">Har bir o'quvchiga shaxsiy mentor tayinlanadi</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="about-feature-icon">💻</div>
+          <div>
+            <div class="about-feature-title">Zamonaviy lab</div>
+            <div class="about-feature-text">MacBook va Linux muhiti bilan jihozlangan laboratoriya</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <div class="about-feature-icon">🤝</div>
+          <div>
+            <div class="about-feature-title">Hamkorlar</div>
+            <div class="about-feature-text">50+ IT kompaniya bilan hamkorlik qilamiz</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS SECTION -->
+<section class="skills-section">
+  <div class="skills-inner">
+    <div class="skills-header reveal">
+      <div>
+        <div class="section-tag">Texnologiyalar</div>
+        <h2 class="section-title" style="font-size:1.8rem">Nimalarni o'rganasiz?</h2>
+      </div>
+      <div class="skills-tabs">
+        <button class="tab-btn active">Dasturlash</button>
+        <button class="tab-btn">Design</button>
+        <button class="tab-btn">DevOps</button>
+      </div>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-item"><div class="skill-emoji">🐍</div><div class="skill-name">Python</div></div>
+      <div class="skill-item"><div class="skill-emoji">⚛️</div><div class="skill-name">React</div></div>
+      <div class="skill-item"><div class="skill-emoji">🟨</div><div class="skill-name">JavaScript</div></div>
+      <div class="skill-item"><div class="skill-emoji">🐘</div><div class="skill-name">PostgreSQL</div></div>
+      <div class="skill-item"><div class="skill-emoji">🦋</div><div class="skill-name">Flutter</div></div>
+      <div class="skill-item"><div class="skill-emoji">🦫</div><div class="skill-name">Go lang</div></div>
+      <div class="skill-item"><div class="skill-emoji">🔴</div><div class="skill-name">Redis</div></div>
+      <div class="skill-item"><div class="skill-emoji">🐳</div><div class="skill-name">Docker</div></div>
+      <div class="skill-item"><div class="skill-emoji">☸️</div><div class="skill-name">Kubernetes</div></div>
+      <div class="skill-item"><div class="skill-emoji">🤖</div><div class="skill-name">TensorFlow</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEACHERS -->
+<section class="teachers-avtar" id="teachers">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;" class="reveal">
+      <div class="section-tag">Jamoamiz</div>
+      <h2 class="section-title">Eng yaxshi o'qituvchilarimiz</h2>
+      <p class="section-desc" style="margin:0 auto;">Sanoatning eng tajribali mutaxassislari sizni o'qitadi.</p>
+    </div>
+    <div class="teachers-grid">
+      <div class="teacher-card reveal">
+        <div class="teacher-avatar"></div>
+        <div class="teacher-name">Akbar Toshmatov</div>
+        <div class="teacher-role">Python & Backend</div>
+        <div class="teacher-bio">Google'da 7 yil tajribaga ega senior muhandis. Python va Django bo'yicha xalqaro sertifikatlangan.</div>
+        <div class="teacher-stats">
+          <div class="teacher-stat"><div class="teacher-stat-num">148</div><div class="teacher-stat-label">Talaba</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">4.9</div><div class="teacher-stat-label">Reyting</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">7</div><div class="teacher-stat-label">Yil</div></div>
+        </div>
+      </div>
+      <div class="teacher-card reveal reveal-delay-1">
+        <div class="teacher-avatar"></div>
+        <div class="teacher-name">Zilola Rahimova</div>
+        <div class="teacher-role">UI/UX & Frontend</div>
+        <div class="teacher-bio">Yandex'da 5 yil ishlagan UI/UX dizayner. Figma va React bo'yicha chuqur bilimga ega.</div>
+        <div class="teacher-stats">
+          <div class="teacher-stat"><div class="teacher-stat-num">112</div><div class="teacher-stat-label">Talaba</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">4.8</div><div class="teacher-stat-label">Reyting</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">5</div><div class="teacher-stat-label">Yil</div></div>
+        </div>
+      </div>
+      <div class="teacher-card reveal reveal-delay-2">
+        <div class="teacher-avatar"></div>
+        <div class="teacher-name">Jasur Mirzayev</div>
+        <div class="teacher-role">Data Science & AI</div>
+        <div class="teacher-bio">PhD in Computer Science. Machine Learning va sun'iy intellekt bo'yicha olim va muhandis.</div>
+        <div class="teacher-stats">
+          <div class="teacher-stat"><div class="teacher-stat-num">89</div><div class="teacher-stat-label">Talaba</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">4.9</div><div class="teacher-stat-label">Reyting</div></div>
+          <div class="teacher-stat"><div class="teacher-stat-num">9</div><div class="teacher-stat-label">Yil</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<div class="section-full" id="news">
+  <div class="section-full-inner">
+    <div class="reveal">
+      <div class="section-tag">So'nggi yangiliklar</div>
+      <h2 class="section-title">Yangiliklarimiz</h2>
+    </div>
+    <div class="news-grid">
+      <div class="news-main reveal">
+        <div class="news-img"></div>
+        <div class="news-body">
+          <span class="news-cat">Tadbir</span>
+          <div class="news-title">EduMaktab 2025 yilgi yillik bitiruvchilar marosimi bo'lib o'tdi</div>
+          <div class="news-date">📅 15 Aprel 2025 • 5 min o'qish</div>
+        </div>
+      </div>
+      <div class="news-side">
+        <div class="news-small reveal">
+          <div class="news-img news-img-small" style="font-size:2rem">🤝</div>
+          <div class="news-body">
+            <span class="news-cat">Hamkorlik</span>
+            <div class="news-title">EPAM Systems bilan yangi shartnoma imzolandi</div>
+            <div class="news-date">📅 10 Aprel 2025</div>
+          </div>
+        </div>
+        <div class="news-small reveal reveal-delay-1">
+          <div class="news-img news-img-small" style="font-size:2rem">🆕</div>
+          <div class="news-body">
+            <span class="news-cat">Kurs</span>
+            <div class="news-title">Yangi Flutter kursi ro'yxatga olish boshlanmoqda</div>
+            <div class="news-date">📅 8 Aprel 2025</div>
+          </div>
+        </div>
+        <div class="news-small reveal reveal-delay-2">
+          <div class="news-img news-img-small" style="font-size:2rem">🏆</div>
+          <div class="news-body">
+            <span class="news-cat">Yutuq</span>
+            <div class="news-title">Talabamiz Tech Olympiad'da 1-o'rin egalladi</div>
+            <div class="news-date">📅 3 Aprel 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TARIFFS -->
+<section class="section" id="tariffs">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;" class="reveal">
+      <div class="section-tag">Narxlar</div>
+      <h2 class="section-title">Tariflarimiz</h2>
+      <p class="section-desc" style="margin:0 auto;">Har qanday ehtiyoj uchun mos tarif toping.</p>
+    </div>
+    <div class="tariffs-grid">
+      <div class="tariff-card reveal">
+        <div class="tariff-name">Standart</div>
+        <div style="color:var(--text2);font-size:0.85rem">Boshlang'ich uchun ideal</div>
+        <div class="tariff-price">800,000 <span>so'm/oy</span></div>
+        <ul class="tariff-features">
+          <li>1 ta kurs</li>
+          <li>Onlayn darslar</li>
+          <li>Chat orqali yordam</li>
+          <li>Sertifikat</li>
+          <li>3 oy kirish</li>
+        </ul>
+        <button class="tariff-btn tariff-btn-outline" onclick="openModal('register')">Boshlash</button>
+      </div>
+      <div class="tariff-card featured reveal reveal-delay-1">
+        <div class="tariff-badge">⭐ Eng mashhur</div>
+        <div class="tariff-name" style="color:var(--text)">Professional</div>
+        <div style="color:var(--text2);font-size:0.85rem">Karyera o'zgartirish uchun</div>
+        <div class="tariff-price" style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">1,400,000 <span style="-webkit-text-fill-color:var(--text2)">so'm/oy</span></div>
+        <ul class="tariff-features">
+          <li>3 ta kurs</li>
+          <li>Onlayn + Oflayn</li>
+          <li>Shaxsiy mentor</li>
+          <li>Loyiha ko'magi</li>
+          <li>Ish topishda yordam</li>
+          <li>6 oy kirish</li>
+        </ul>
+        <button class="tariff-btn tariff-btn-filled" onclick="openModal('register')">Boshlash</button>
+      </div>
+      <div class="tariff-card reveal reveal-delay-2">
+        <div class="tariff-name">Premium</div>
+        <div style="color:var(--text2);font-size:0.85rem">Korporativ & individual</div>
+        <div class="tariff-price" style="color:var(--accent3)">2,200,000 <span>so'm/oy</span></div>
+        <ul class="tariff-features">
+          <li>Cheksiz kurslar</li>
+          <li>VIP sinfxona</li>
+          <li>Haftasiga 3 ta 1:1 sessiya</li>
+          <li>Portfolio yaratish</li>
+          <li>Kafolatlangan ish joyi</li>
+          <li>1 yillik kirish</li>
+        </ul>
+        <button class="tariff-btn tariff-btn-gold" onclick="openModal('register')">Boshlash</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTRATION -->
+<section class="reg-section" id="register">
+  <div class="reg-bg"></div>
+  <div class="reg-inner">
+    <div class="reg-left reveal">
+      <div class="section-tag">Ro'yxatdan o'tish</div>
+      <h2 class="section-title">Kelajakni bugun boshlang</h2>
+      <p class="section-desc">Hoziroq ro'yxatdan o'ting va bepul kirish darsi oling!</p>
+      <div class="reg-perks">
+        <div class="reg-perk"><div class="perk-dot"></div>Bepul sinov darsi</div>
+        <div class="reg-perk"><div class="perk-dot"></div>Hech qanday yashirin to'lov yo'q</div>
+        <div class="reg-perk"><div class="perk-dot"></div>Istalgan vaqt bekor qilish mumkin</div>
+        <div class="reg-perk"><div class="perk-dot"></div>24/7 texnik yordam</div>
+      </div>
+      <!-- BUBBLES -->
+      <div class="bubbles-container" id="bubbles"></div>
+    </div>
+    <div class="reg-form reveal reveal-delay-1">
+      <div class="form-title">📝 Ariza qoldiring</div>
+      <form id="regForm" onsubmit="submitForm(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ismingiz *</label>
+            <input type="text" placeholder="Ism" id="firstName" required>
+          </div>
+          <div class="form-group">
+            <label>Familiyangiz *</label>
+            <input type="text" placeholder="Familiya" id="lastName" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Telefon raqam *</label>
+          <input type="tel" placeholder="+998 90 000 00 00" id="phone" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="email@example.com" id="email">
+        </div>
+        <div class="form-group">
+          <label>Qiziqadigan kurs *</label>
+          <select id="course" required>
+            <option value="">Kursni tanlang...</option>
+            <option>Python dasturlash</option>
+            <option>JavaScript & React</option>
+            <option>Data Science & ML</option>
+            <option>Web Development</option>
+            <option>AI & Deep Learning</option>
+            <option>Flutter Mobile Dev</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tarif</label>
+          <select id="tariff">
+            <option value="">Tarifni tanlang...</option>
+            <option>Standart — 800,000 so'm</option>
+            <option>Professional — 1,400,000 so'm</option>
+            <option>Premium — 2,200,000 so'm</option>
+          </select>
+        </div>
+        <button type="submit" class="form-submit">🚀 Ro'yxatdan o'tish</button>
+        <div class="form-note">✓ Ma'lumotlaringiz xavfsiz saqlanadi</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          <div class="dot"></div>
+          Edu<span>Maktab</span>
+        </a>
+        <p>O'zbekistonning yetakchi IT ta'lim markazi. 2018-yildan buyon sifatli ta'lim.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" title="Telegram">✈</a>
+          <a href="#" class="social-btn" title="Instagram">📷</a>
+          <a href="#" class="social-btn" title="YouTube">▶</a>
+          <a href="#" class="social-btn" title="LinkedIn">in</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Kurslar</h4>
+        <ul>
+          <li><a href="#courses">Python</a></li>
+          <li><a href="#courses">JavaScript</a></li>
+          <li><a href="#courses">Data Science</a></li>
+          <li><a href="#courses">Flutter</a></li>
+          <li><a href="#courses">AI & ML</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Maktab</h4>
+        <ul>
+          <li><a href="#about">Biz haqimizda</a></li>
+          <li><a href="#teachers">O'qituvchilar</a></li>
+          <li><a href="#news">Yangiliklar</a></li>
+          <li><a href="#tariffs">Tariflar</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Aloqa</h4>
+        <ul>
+          <li><a href="tel:+998901234567">+998 90 123 45 67</a></li>
+          <li><a href="mailto:info@edumaktab.uz">info@edumaktab.uz</a></li>
+          <li><a href="#">Toshkent, Yunusobod</a></li>
+          <li><a href="#register">Ariza qoldirish</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2025 EduMaktab. Barcha huquqlar himoyalangan.</div>
+      <div style="display:flex;gap:20px;">
+        <a href="#">Maxfiylik siyosati</a>
+        <a href="#">Foydalanish shartlari</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal" onclick="closeModal('video')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="closeModal('video')">✕</div>
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:16px;font-size:1.2rem">🎬 EduMaktab haqida</h3>
+    <div style="background:var(--bg3);border-radius:12px;height:240px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--text2)">
+      ▶ Video yuklanmoqda...
+    </div>
+    <p style="color:var(--text2);font-size:0.875rem;margin-top:14px;line-height:1.6">
+      Bizning maktab haqida to'liq ma'lumot olish uchun videoni tomosha qiling. 
+      O'quv jarayoni, o'qituvchilar va bitiruvchilarning fikrlari.
+    </p>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal" onclick="closeModal('register')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="closeModal('register')">✕</div>
+    <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px;font-size:1.2rem">🚀 Tezkor ro'yxat</h3>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:20px">Qisqacha ma'lumot qoldiring, biz siz bilan bog'lanamiz</p>
+    <div class="form-group">
+      <label>Ismingiz</label>
+      <input type="text" placeholder="Ismingizni kiriting" id="modalName">
+    </div>
+    <div class="form-group">
+      <label>Telefon</label>
+      <input type="tel" placeholder="+998 90 000 00 00" id="modalPhone">
+    </div>
+    <div class="form-group">
+      <label>Kurs</label>
+      <select id="modalCourse">
+        <option>Python dasturlash</option>
+        <option>JavaScript & React</option>
+        <option>Data Science & ML</option>
+        <option>Web Development</option>
+        <option>AI & Deep Learning</option>
+        <option>Flutter Mobile Dev</option>
+      </select>
+    </div>
+    <button class="form-submit" onclick="submitModal()">📲 Yuborish</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon">✅</div>
+  <div class="toast-text">Muvaffaqiyatli yuborildi! Tez orada bog'lanamiz.</div>
+</div>
+
+<!-- SCROLL TOP -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ─── NAV SCROLL ───
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  const scrollTop = document.getElementById('scrollTop');
+  if (window.scrollY > 80) { nav.classList.add('scrolled'); scrollTop.classList.add('visible'); }
+  else { nav.classList.remove('scrolled'); scrollTop.classList.remove('visible'); }
+});
+
+// ─── HAMBURGER ───
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+document.querySelectorAll('.mob-link, .mob-cta').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  });
+});
+
+// ─── SMOOTH SCROLL + CLOSE MENU ───
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    if (id.length > 1) {
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+  });
+});
+
+// ─── COUNTER ANIMATION ───
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  let current = 0;
+  const increment = target / 60;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) { el.textContent = '+' + target; clearInterval(timer); }
+    else el.textContent = '+' + Math.floor(current);
+  }, 30);
+}
+
+// ─── REVEAL ON SCROLL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.querySelector && e.target.classList.contains('stat-num') || e.target.dataset?.target) {
+        if (e.target.dataset.target) animateCounter(e.target);
+      }
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Counter observer
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.dataset.target) {
+      animateCounter(e.target);
+      counterObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+// ─── COURSE FILTER ───
+document.querySelectorAll('.tab-btn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.course-card').forEach(card => {
+      if (filter === 'all' || card.dataset.category === filter) {
+        card.style.display = '';
+        setTimeout(() => card.style.opacity = '1', 10);
+      } else {
+        card.style.opacity = '0';
+        setTimeout(() => card.style.display = 'none', 200);
+      }
+    });
+  });
+});
+
+// ─── MODAL ───
+function openModal(type) {
+  if (type === 'video') document.getElementById('videoModal').classList.add('active');
+  if (type === 'register') document.getElementById('registerModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(type) {
+  if (type === 'video') document.getElementById('videoModal').classList.remove('active');
+  if (type === 'register') document.getElementById('registerModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('video'); closeModal('register'); } });
+
+// ─── TOAST ───
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ─── FORM SUBMIT ───
+function submitForm(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  btn.textContent = '⏳ Yuklanmoqda...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '🚀 Ro\'yxatdan o\'tish';
+    btn.disabled = false;
+    document.getElementById('regForm').reset();
+    showToast();
+  }, 1500);
+}
+
+function submitModal() {
+  const name = document.getElementById('modalName').value.trim();
+  const phone = document.getElementById('modalPhone').value.trim();
+  if (!name || !phone) { alert('Iltimos, barcha maydonlarni to\'ldiring'); return; }
+  closeModal('register');
+  showToast();
+  document.getElementById('modalName').value = '';
+  document.getElementById('modalPhone').value = '';
+}
+
+// ─── BUBBLES ───
+const bubbleColors = [
+  '#00d4ff','#7c3aed','#f59e0b','#10b981','#ef4444',
+  '#3b82f6','#8b5cf6','#06b6d4','#84cc16','#f97316',
+  '#ec4899','#14b8a6','#6366f1','#a855f7','#22c55e',
+  '#eab308','#0ea5e9','#d946ef','#fb923c','#2dd4bf'
+];
+const bubbleContainer = document.getElementById('bubbles');
+for (let i = 0; i < 20; i++) {
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  const size = 28 + Math.random() * 24;
+  b.style.cssText = `
+    width:${size}px;height:${size}px;
+    background:${bubbleColors[i % bubbleColors.length]};
+    opacity:${0.4 + Math.random() * 0.5};
+    animation-delay:${Math.random() * 3}s;
+    animation-duration:${2.5 + Math.random() * 2}s;
+  `;
+  b.onclick = () => document.querySelector('#register .reg-form')?.scrollIntoView({ behavior: 'smooth' });
+  bubbleContainer.appendChild(b);
+}
+
+// ─── ABOUT VIDEO ───
+document.querySelector('.about-video').addEventListener('click', () => openModal('video'));
+
+// ─── SKILL TABS (demo) ───
+const skillsData = {
+  'Dasturlash': ['🐍 Python','⚛️ React','🟨 JavaScript','🐘 PostgreSQL','🦋 Flutter','🦫 Go lang','🔴 Redis','🐳 Docker','☸️ Kubernetes','🤖 TensorFlow'],
+  'Design': ['🎨 Figma','✏️ Adobe XD','🖼️ Photoshop','📐 Sketch','🎭 Illustrator','💡 InVision','🎯 Framer','🌈 Zeplin','🔲 Canva','🖌️ Procreate'],
+  'DevOps': ['🐳 Docker','☸️ Kubernetes','☁️ AWS','🔵 Azure','🟠 GCP','🔧 Jenkins','📦 Terraform','📊 Grafana','🔍 Prometheus','🚀 GitLab CI']
+};
+
+document.querySelectorAll('.skills-tabs .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.skills-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const skills = skillsData[btn.textContent.trim()];
+    if (skills) {
+      const grid = document.querySelector('.skills-grid');
+      grid.innerHTML = skills.map(s => {
+        const [emoji, ...nameParts] = s.split(' ');
+        return `<div class="skill-item"><div class="skill-emoji">${emoji}</div><div class="skill-name">${nameParts.join(' ')}</div></div>`;
+      }).join('');
+    }
+  });
+});
+</script>
+</body>
+</html>
